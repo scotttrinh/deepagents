@@ -1023,20 +1023,28 @@ def parse_args() -> argparse.Namespace:
 
     parser.add_argument(
         "--sandbox",
-        choices=["none", "agentcore", "modal", "daytona", "runloop", "langsmith"],
+        choices=[
+            "none",
+            "agentcore",
+            "modal",
+            "daytona",
+            "runloop",
+            "langsmith",
+            "vercel",
+        ],
         default="none",
         metavar="TYPE",
         help=(
             "Remote sandbox for code execution "
             "(default: none - local only; langsmith is included, "
-            "agentcore/modal/daytona/runloop require downloading extras)"
+            "agentcore/modal/daytona/runloop/vercel require downloading extras)"
         ),
     )
 
     parser.add_argument(
         "--sandbox-id",
         metavar="ID",
-        help="Existing sandbox ID to reuse (skips creation and cleanup)",
+        help="Existing sandbox ID to attach to",
     )
 
     parser.add_argument(
