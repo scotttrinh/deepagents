@@ -66,10 +66,12 @@
     "langchain-modal": "modal",
     "langchain-quickjs": "quickjs",
     "langchain-runloop": "runloop",
+    "langchain-vercel-sandbox": "vercel-sandbox",
     "langsmith-sandbox": "langsmith-sandbox",
     "modal": "modal",
     "quickjs": "quickjs",
     "runloop": "runloop",
+    "vercel-sandbox": "vercel-sandbox",
     "sdk": "deepagents"
   },
   "branchRules": [
@@ -122,6 +124,11 @@
     {
       "label": "runloop",
       "prefix": "libs/partners/runloop/",
+      "skipExcludedFiles": true
+    },
+    {
+      "label": "vercel-sandbox",
+      "prefix": "libs/partners/vercel-sandbox/",
       "skipExcludedFiles": true
     },
     {

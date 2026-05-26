@@ -1,7 +1,7 @@
 # Harbor evaluation workflow for Deep Agents
 #
 # Runs terminal-bench evaluations via Harbor with configurable sandbox
-# environments (Docker, Daytona, LangSmith, Modal, Runloop).
+# environments (Docker, Daytona, LangSmith, Modal, Runloop, Vercel).
 # Models are selected via dropdown or comma-separated override.
 #
 # Required secrets (vary by sandbox + model provider):
@@ -22,6 +22,10 @@
 #   MODAL_TOKEN_ID             — needed for Modal sandbox
 #   MODAL_TOKEN_SECRET         — needed for Modal sandbox
 #   RUNLOOP_API_KEY            — needed for Runloop sandbox
+#   VERCEL_TOKEN               — needed for Vercel sandbox (unless using VERCEL_OIDC_TOKEN)
+#   VERCEL_OIDC_TOKEN          — needed for Vercel sandbox (unless using VERCEL_TOKEN)
+#   VERCEL_PROJECT_ID          — optional Vercel sandbox project scope
+#   VERCEL_TEAM_ID             — optional Vercel sandbox team scope
 
 name: "📊 Evals - Harbor"
 run-name: >-
@@ -126,6 +130,7 @@ on:
           - langsmith
           - modal
           - runloop
+          - vercel
       n_tasks:
         description: "Maximum number of tasks to run (0 = all tasks in dataset)"
         required: true
@@ -252,6 +257,10 @@ jobs:
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
       OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
       RUNLOOP_API_KEY: ${{ secrets.RUNLOOP_API_KEY }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_OIDC_TOKEN: ${{ secrets.VERCEL_OIDC_TOKEN }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TEAM_ID: ${{ secrets.VERCEL_TEAM_ID }}
       XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
     steps:
       - name: "🔑 Verify sandbox credentials"
@@ -277,6 +286,11 @@ jobs:
               ;;
             runloop)
               [ -z "$RUNLOOP_API_KEY" ] && missing+=("RUNLOOP_API_KEY")
+              ;;
+            vercel)
+              if [ -z "$VERCEL_TOKEN" ] && [ -z "$VERCEL_OIDC_TOKEN" ]; then
+                missing+=("VERCEL_TOKEN or VERCEL_OIDC_TOKEN")
+              fi
               ;;
             *)
               echo "::error::Unknown sandbox environment: $HARBOR_SANDBOX_ENV"

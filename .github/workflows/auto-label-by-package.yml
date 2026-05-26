@@ -44,6 +44,7 @@ jobs:
               "modal": "modal",
               "quickjs": "quickjs",
               "runloop": "runloop",
+              "vercel-sandbox": "vercel-sandbox",
               "langsmith-sandbox": "langsmith-sandbox",
             };
 

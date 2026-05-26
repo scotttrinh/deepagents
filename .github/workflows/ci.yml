@@ -43,6 +43,7 @@ jobs:
       modal: ${{ steps.filter.outputs.modal }}
       runloop: ${{ steps.filter.outputs.runloop }}
       quickjs: ${{ steps.filter.outputs.quickjs }}
+      vercel-sandbox: ${{ steps.filter.outputs.vercel-sandbox }}
     steps:
       - name: "📋 Checkout Code"
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -121,6 +122,12 @@ jobs:
               - '.github/workflows/_lint.yml'
               - '.github/workflows/_test.yml'
               - '.github/workflows/_benchmark.yml'
+              - '.github/actions/**'
+            vercel-sandbox:
+              - 'libs/partners/vercel-sandbox/**'
+              - '.github/workflows/ci.yml'
+              - '.github/workflows/_lint.yml'
+              - '.github/workflows/_test.yml'
               - '.github/actions/**'
   # Run linting on changed packages
   lint-deepagents:
@@ -202,6 +209,15 @@ jobs:
     uses: ./.github/workflows/_lint.yml
     with:
       working-directory: "libs/partners/quickjs"
+      python-version: "3.11"
+
+  lint-vercel-sandbox:
+    name: "🧹 Lint vercel-sandbox"
+    needs: changes
+    if: needs.changes.outputs.vercel-sandbox == 'true' || github.event_name == 'push'
+    uses: ./.github/workflows/_lint.yml
+    with:
+      working-directory: "libs/partners/vercel-sandbox"
       python-version: "3.11"
 
   # Run unit tests on changed packages
@@ -296,6 +312,16 @@ jobs:
       python-versions: '["3.11", "3.12", "3.13", "3.14"]'
       coverage-python-version: "3.11"
 
+  test-vercel-sandbox:
+    name: "🧪 Test vercel-sandbox"
+    needs: changes
+    if: needs.changes.outputs.vercel-sandbox == 'true' || github.event_name == 'push'
+    uses: ./.github/workflows/_test.yml
+    with:
+      working-directory: "libs/partners/vercel-sandbox"
+      python-versions: '["3.11", "3.12", "3.13", "3.14"]'
+      coverage-python-version: "3.12"
+
   # Run CodSpeed benchmarks on SDK changes
   benchmark-deepagents:
     name: "⏱️ Benchmark deepagents"
@@ -359,6 +385,7 @@ jobs:
       - lint-modal
       - lint-runloop
       - lint-quickjs
+      - lint-vercel-sandbox
       - test-deepagents
       - test-cli
       - test-code
@@ -368,6 +395,7 @@ jobs:
       - test-modal
       - test-runloop
       - test-quickjs
+      - test-vercel-sandbox
       - benchmark-deepagents
       - benchmark-code
       - check-release-options

@@ -69,6 +69,7 @@ jobs:
       modal-release: ${{ steps.check-releases.outputs.modal-release }}
       runloop-release: ${{ steps.check-releases.outputs.runloop-release }}
       quickjs-release: ${{ steps.check-releases.outputs.quickjs-release }}
+      vercel-sandbox-release: ${{ steps.check-releases.outputs.vercel-sandbox-release }}
       release-version: ${{ steps.check-releases.outputs.release-version }}
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
@@ -173,6 +174,13 @@ jobs:
             echo "QuickJS release detected: $COMMIT_MSG"
           else
             echo "quickjs-release=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if echo "$CHANGED" | grep -q "^libs/partners/vercel-sandbox/CHANGELOG.md$" && echo "$COMMIT_MSG" | grep -qE "^release\(langchain-vercel-sandbox\):"; then
+            echo "vercel-sandbox-release=true" >> "$GITHUB_OUTPUT"
+            echo "Vercel Sandbox release detected: $COMMIT_MSG"
+          else
+            echo "vercel-sandbox-release=false" >> "$GITHUB_OUTPUT"
           fi
 
   # Wait out an in-flight publish instead of recomputing against half-updated state.
@@ -527,7 +535,8 @@ jobs:
       needs.detect-release-commit.outputs.daytona-release == 'true' ||
       needs.detect-release-commit.outputs.modal-release == 'true' ||
       needs.detect-release-commit.outputs.runloop-release == 'true' ||
-      needs.detect-release-commit.outputs.quickjs-release == 'true'
+      needs.detect-release-commit.outputs.quickjs-release == 'true' ||
+      needs.detect-release-commit.outputs.vercel-sandbox-release == 'true'
     runs-on: ubuntu-latest
     permissions:
       actions: write # required for `gh workflow run` to dispatch release.yml
@@ -545,6 +554,7 @@ jobs:
       MODAL_RELEASE: ${{ needs.detect-release-commit.outputs.modal-release }}
       RUNLOOP_RELEASE: ${{ needs.detect-release-commit.outputs.runloop-release }}
       QUICKJS_RELEASE: ${{ needs.detect-release-commit.outputs.quickjs-release }}
+      VERCEL_SANDBOX_RELEASE: ${{ needs.detect-release-commit.outputs.vercel-sandbox-release }}
     steps:
       - name: Dispatch release workflows
         # Best-effort: each package dispatch is independent. If one fails (transient
@@ -615,6 +625,7 @@ jobs:
           MODAL_RELEASE="${MODAL_RELEASE:-false}";     assert_bool MODAL_RELEASE   "$MODAL_RELEASE"
           RUNLOOP_RELEASE="${RUNLOOP_RELEASE:-false}"; assert_bool RUNLOOP_RELEASE "$RUNLOOP_RELEASE"
           QUICKJS_RELEASE="${QUICKJS_RELEASE:-false}"; assert_bool QUICKJS_RELEASE "$QUICKJS_RELEASE"
+          VERCEL_SANDBOX_RELEASE="${VERCEL_SANDBOX_RELEASE:-false}"; assert_bool VERCEL_SANDBOX_RELEASE "$VERCEL_SANDBOX_RELEASE"
 
           # Banner: log + step summary. The step summary renders at the top of the
           # run page, so operators see the link before scrolling through step logs.
@@ -643,6 +654,7 @@ jobs:
           if [ "$MODAL_RELEASE" = "true" ];   then dispatch langchain-modal;     fi
           if [ "$RUNLOOP_RELEASE" = "true" ]; then dispatch langchain-runloop;   fi
           if [ "$QUICKJS_RELEASE" = "true" ]; then dispatch langchain-quickjs;   fi
+          if [ "$VERCEL_SANDBOX_RELEASE" = "true" ]; then dispatch langchain-vercel-sandbox; fi
           # Append per-package status to the step summary so operators see at a
           # glance which packages were queued vs. which need a manual retry.
           {

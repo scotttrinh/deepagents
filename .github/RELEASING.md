@@ -14,6 +14,7 @@ This document describes the release process for packages in the Deep Agents mono
 | `langchain-modal` | `libs/partners/modal` | `langchain-modal` | [`langchain-modal`](https://pypi.org/project/langchain-modal/) |
 | `langchain-runloop` | `libs/partners/runloop` | `langchain-runloop` | [`langchain-runloop`](https://pypi.org/project/langchain-runloop/) |
 | `langchain-quickjs` | `libs/partners/quickjs` | `langchain-quickjs` | [`langchain-quickjs`](https://pypi.org/project/langchain-quickjs/) |
+| `langchain-vercel-sandbox` | `libs/partners/vercel-sandbox` | `langchain-vercel-sandbox` | [`langchain-vercel-sandbox`](https://pypi.org/project/langchain-vercel-sandbox/) |
 
 ## Overview
 
@@ -155,7 +156,8 @@ Tracks the current version of each package. Automatically updated by release-ple
   "libs/partners/daytona": "0.0.5",
   "libs/partners/modal": "0.0.3",
   "libs/partners/runloop": "0.0.4",
-  "libs/partners/quickjs": "0.0.1"
+  "libs/partners/quickjs": "0.0.1",
+  "libs/partners/vercel-sandbox": "0.0.1"
 }
 ```
 
